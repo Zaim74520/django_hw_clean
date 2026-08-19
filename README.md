@@ -16,3 +16,17 @@
 2. **Установите зависимости:**
    ```bash
    pip install -r requirements.txt
+
+
+
+Тема 2: модели, связи и админка
+Реализовано:
+
+-Модели Employee, Skill, Workplace и промежуточная EmployeeSkill.
+-Связи: Employee–Workplace (ForeignKey), Employee–Skill (ManyToMany).
+-Все модели зарегистрированы в админ‑панели (/admin).
+-Миграции созданы и применены.
+Как проверить
+1. Запустить сервер: python manage.py runserver.
+2. Зайти в админку (/admin) и убедиться, что видны все модели.
+3. Добавить тестовые данные (сотрудник, рабочее место, навыки).
