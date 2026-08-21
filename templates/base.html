@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Сотрудники{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+    <header>
+        <h1>Система сотрудников</h1>
+        <nav>
+            <a href="{% url 'index' %}">Главная</a> |
+            <a href="{% url 'employee_list' %}">Список</a>
+            {% if user.is_authenticated %}
+            |
+            <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" style="background: none; border: none; color: #2c3e50; text-decoration: underline; cursor: pointer; padding: 0; font: inherit;">Выйти ({{ user.username }})</button>
+            </form>
+            {% else %}
+            | <a href="{% url 'login' %}">Войти</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- Сюда будет вставляться контент из других шаблонов -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        &copy; 2026 Моя Компания
+    </footer>
+</body>
+
+</html>

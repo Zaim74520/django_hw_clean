@@ -1,52 +1,64 @@
 from django.db import models
-from workplaces.models import Workplace
 
 
 class Skill(models.Model):
-    SKILL_TYPES = [
-        ("frontend", "Фронтенд"),
-        ("backend", "Бэкенд"),
-        ("testing", "Тестирование"),
-        ("management", "Управление проектами"),
-        ("other", "Другое"),
-    ]
-
     name = models.CharField(max_length=100, verbose_name="Название навыка")
     skill_type = models.CharField(
-        max_length=20, choices=SKILL_TYPES, verbose_name="Тип навыка"
+        max_length=50,
+        blank=True,
+        verbose_name="Тип навыка",
+        help_text="Например: технический, софт-скилл",
     )
-    level = models.IntegerField(
-        verbose_name="Уровень владения",
-        default=1,
-        choices=[(i, i) for i in range(1, 11)],
+    level = models.CharField(
+        max_length=20,
+        blank=True,
+        verbose_name="Уровень",
+        help_text="Например: junior, middle, expert",
     )
-    description = models.TextField(verbose_name="Описание")
+    description = models.TextField(
+        blank=True,
+        verbose_name="Описание",
+        help_text="Например, уровень владения или детали",
+    )
+
+    class Meta:
+        verbose_name = "Навык"
+        verbose_name_plural = "Навыки"
+        ordering = ["name"]
 
     def __str__(self):
-        return f"{self.name} (уровень {self.level})"
+        return self.name
 
 
 class Employee(models.Model):
     GENDER_CHOICES = [
-        ("male", "Мужской"),
-        ("female", "Женский"),
-        ("other", "Другой"),
+        ("M", "Мужской"),
+        ("F", "Женский"),
     ]
 
-    name = models.CharField(max_length=100, verbose_name="Имя")
-    surname = models.CharField(max_length=100, verbose_name="Фамилия", blank=True)
+    surname = models.CharField(max_length=50, verbose_name="Фамилия")
+    name = models.CharField(max_length=50, verbose_name="Имя")
     patronymic = models.CharField(
-        max_length=100, blank=True, null=True, verbose_name="Отчество"
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name="Отчество",
     )
     gender = models.CharField(
-        max_length=10, choices=GENDER_CHOICES, verbose_name="Пол", default="other"
+        max_length=1,
+        choices=GENDER_CHOICES,
+        blank=True,
+        null=True,
+        verbose_name="Пол",
     )
     position = models.CharField(max_length=100, verbose_name="Должность")
-    workplace = models.ForeignKey(
-        Workplace,
+
+    workplace = models.OneToOneField(
+        "workplaces.Workplace",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        related_name="employee",
         verbose_name="Рабочее место",
     )
 
@@ -57,5 +69,41 @@ class Employee(models.Model):
         verbose_name="Навыки",
     )
 
+    class Meta:
+        verbose_name = "Сотрудник"
+        verbose_name_plural = "Сотрудники"
+        ordering = ["surname", "name"]
+
     def __str__(self):
-        return f"{self.name} {self.surname}"  # <-- теперь surname существует
+        # Если отчества нет, показываем только фамилию и имя
+        if self.patronymic:
+            return f"{self.surname} {self.name} {self.patronymic}"
+        return f"{self.surname} {self.name}"
+
+
+class EmployeeImage(models.Model):
+    employee = models.ForeignKey(
+        "Employee",
+        related_name="images",
+        on_delete=models.CASCADE,
+    )
+    image = models.ImageField(
+        upload_to="employee_photos/",
+        verbose_name="Фото",
+    )
+    order = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Порядок отображения",
+    )
+
+    class Meta:
+        verbose_name = "Фото сотрудника"
+        verbose_name_plural = "Фото сотрудников"
+        ordering = ["order"]
+
+    def delete(self, *args, **kwargs):
+        self.image.delete(save=False)
+        super().delete(*args, **kwargs)
+
+    def __str__(self):
+        return f"Фото {self.employee.surname} {self.employee.name}"

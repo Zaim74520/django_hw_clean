@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ employee.surname }} {{ employee.name }} {{ employee.patronymic|default:"" }}</h1>
+
+<p><strong>Пол:</strong> {{ employee.get_gender_display|default:"Не указан" }}</p>
+<p><strong>Должность:</strong> {{ employee.position }}</p>
+<p><strong>Рабочее место:</strong> {{ employee.workplace|default:"Не назначено" }}</p>
+
+<h2>Навыки</h2>
+<ul>
+    {% for skill in employee.skills.all %}
+    <li>{{ skill.name }} (уровень: {{ skill.level|default:"не указан" }})</li>
+    {% empty %}
+    <li>Навыки не указаны.</li>
+    {% endfor %}
+</ul>
+
+<h2>Фотографии</h2>
+{% if employee.images.all %}
+{% for image in employee.images.all %}
+<p>Фото {{ forloop.counter }}</p>
+<img src="{{ image.image.url }}" alt="Фото {{ employee.surname }} {{ employee.name }}"
+    class="employee-photo">
+{% endfor %}
+{% else %}
+<p>Фотографии не загружены.</p>
+{% endif %}
+
+<a href="{% url 'employee_list' %}">Назад к списку</a>
+{% endblock %}
