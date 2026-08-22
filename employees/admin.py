@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Employee, Skill, EmployeeImage
+
+from .models import Employee, EmployeeImage, Skill
 
 
 @admin.register(Skill)
@@ -11,7 +12,15 @@ class SkillAdmin(admin.ModelAdmin):
 
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ("surname", "name", "patronymic", "position", "workplace", "gender")
+    list_display = (
+        "surname",
+        "name",
+        "patronymic",
+        "position",
+        "workplace",
+        "gender",
+        "hired_at",
+    )
     list_filter = ("workplace", "gender")
     search_fields = ("surname", "name", "patronymic")
     fields = (
@@ -20,6 +29,7 @@ class EmployeeAdmin(admin.ModelAdmin):
         "patronymic",
         "gender",
         "position",
+        "hired_at",
         "workplace",
         "skills",
     )

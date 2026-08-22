@@ -6,7 +6,9 @@ def link_workplaces(apps, schema_editor):
     Employee = apps.get_model("employees", "Employee")
     Workplace = apps.get_model("workplaces", "Workplace")
     for employee in Employee.objects.all():
-        workplace = Workplace.objects.filter(room_number=str(employee.workplace_old)).first()
+        workplace = Workplace.objects.filter(
+            room_number=str(employee.workplace_old)
+        ).first()
         if workplace:
             employee.workplace = workplace
             employee.save(update_fields=["workplace"])

@@ -1,11 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% if employee.images.all %}
+<img src="{{ employee.images.first.image.url }}" alt="Фото {{ employee.surname }} {{ employee.name }}"
+    class="employee-photo employee-photo--main">
+{% endif %}
+
 <h1>{{ employee.surname }} {{ employee.name }} {{ employee.patronymic|default:"" }}</h1>
 
 <p><strong>Пол:</strong> {{ employee.get_gender_display|default:"Не указан" }}</p>
 <p><strong>Должность:</strong> {{ employee.position }}</p>
-<p><strong>Рабочее место:</strong> {{ employee.workplace|default:"Не назначено" }}</p>
+<p><strong>Номер стола:</strong> {{ employee.workplace.room_number|default:"Не назначено" }}</p>
+<p><strong>Стаж работы:</strong>
+    {% if employee.tenure_days is not None %}
+    {{ employee.tenure_days }} дн.
+    {% else %}
+    Дата приёма не указана
+    {% endif %}
+</p>
 
 <h2>Навыки</h2>
 <ul>
@@ -16,15 +28,14 @@
     {% endfor %}
 </ul>
 
-<h2>Фотографии</h2>
-{% if employee.images.all %}
-{% for image in employee.images.all %}
-<p>Фото {{ forloop.counter }}</p>
+<h2>Галерея</h2>
+{% if employee.images.all|length > 1 %}
+{% for image in employee.images.all|slice:"1:" %}
 <img src="{{ image.image.url }}" alt="Фото {{ employee.surname }} {{ employee.name }}"
     class="employee-photo">
 {% endfor %}
 {% else %}
-<p>Фотографии не загружены.</p>
+<p>Дополнительных фотографий нет.</p>
 {% endif %}
 
 <a href="{% url 'employee_list' %}">Назад к списку</a>

@@ -18,6 +18,13 @@
                     Навыки не указаны
                     {% endfor %}
                 </p>
+                <p class="employee-card__tenure">
+                    {% if employee.tenure_days is not None %}
+                    Стаж: {{ employee.tenure_days }} дн.
+                    {% else %}
+                    Дата приёма не указана
+                    {% endif %}
+                </p>
             </div>
         </div>
     </a>

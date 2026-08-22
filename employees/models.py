@@ -1,4 +1,8 @@
+from datetime import date
+
 from django.db import models
+
+from .validators import validate_neighbor_positions
 
 
 class Skill(models.Model):
@@ -53,6 +57,12 @@ class Employee(models.Model):
     )
     position = models.CharField(max_length=100, verbose_name="Должность")
 
+    hired_at = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="Дата приёма на работу",
+    )
+
     workplace = models.OneToOneField(
         "workplaces.Workplace",
         on_delete=models.SET_NULL,
@@ -73,6 +83,18 @@ class Employee(models.Model):
         verbose_name = "Сотрудник"
         verbose_name_plural = "Сотрудники"
         ordering = ["surname", "name"]
+
+    def clean(self):
+        validate_neighbor_positions(self)
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    def tenure_days(self):
+        if not self.hired_at:
+            return None
+        return (date.today() - self.hired_at).days
 
     def __str__(self):
         # Если отчества нет, показываем только фамилию и имя

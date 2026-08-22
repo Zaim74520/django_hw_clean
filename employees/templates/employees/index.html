@@ -6,7 +6,9 @@
 <p>Это учебный проект на Django. Здесь хранится информация о сотрудниках,
     их навыках, фотографиях и рабочих местах.</p>
 
-<h2>Наши сотрудники</h2>
+<p><strong>Всего сотрудников в базе: {{ total_employees }}</strong></p>
+
+<h2>Последние принятые на работу</h2>
 {% for employee in employees %}
 {% include "includes/employee_card.html" %}
 {% empty %}
