@@ -18,6 +18,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("employees", "0002_skill_alter_employee_options_employee_gender_and_more"),
+        ("workplaces", "0001_initial"),
     ]
 
     operations = [
