@@ -10,6 +10,7 @@ urlpatterns = [
     path("", index, name="index"),
     path("employees/", include("employees.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
+    path("api/", include("employees.api_urls")),
 ]
 
 # Подключение медиафайлов только в режиме разработки
