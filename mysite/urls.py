@@ -24,6 +24,7 @@ urlpatterns = [
     path("employees/", include("employees.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
     path("api/", include("employees.api_urls")),
+    path("api/", include("collects.urls")),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),
