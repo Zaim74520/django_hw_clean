@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME:-django_hw}
+      - POSTGRES_USER=${DB_USER:-django_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-django_pass}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-django_user} -d ${DB_NAME:-django_hw}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env.dev
+    environment:
+      - DB_ENGINE=django.db.backends.postgresql
+      - DB_NAME=${DB_NAME:-django_hw}
+      - DB_USER=${DB_USER:-django_user}
+      - DB_PASSWORD=${DB_PASSWORD:-django_pass}
+      - DB_HOST=db
+      - DB_PORT=5432
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py runserver 0.0.0.0:8000"
+
+volumes:
+  postgres_data:
